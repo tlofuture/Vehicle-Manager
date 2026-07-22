@@ -1,50 +1,73 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="sidebar">
-    <div class="sidebar-header">
-        <h2>Vehicles</h2>
-        <p>Manage your vehicles, fuel log, service, and parts</p>
-        <button class="btn btn-primary" onclick="document.getElementById('addVehicleModal').style.display='block'">New Vehicle</button>
+<div class="page-title">
+    <h2>Vehicles</h2>
+    <p class="subtitle">Manage your vehicles, fuel log, service, and parts</p>
+</div>
+
+<div class="main-container">
+    <div class="sidebar">
+        <div class="sidebar-controls">
+            <select id="filterStatus">
+                <option>Show Active</option>
+                <option>Show Inactive</option>
+                <option>Show All</option>
+            </select>
+            <input type="text" placeholder="Search..." id="searchBox">
+        </div>
+        <div class="vehicle-list">
+            {% for v in vehicles %}
+            <a href="/vehicles/{{ v.id }}" class="vehicle-item">
+                <span class="vehicle-num">{{ v.vehicle_number }}</span>
+                <span class="vehicle-name">{{ v.name }} {{ v.model }}</span>
+            </a>
+            {% endfor %}
+        </div>
     </div>
-    <div class="vehicle-list">
-        {% for v in vehicles %}
-        <a href="/vehicles/{{ v.id }}" class="vehicle-item">
-            <span>{{ v.vehicle_number }}</span>
-            <span>{{ v.name }}</span>
-        </a>
-        {% endfor %}
+
+    <div class="content">
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="document.getElementById('addVehicleModal').style.display='block'"><i class="fas fa-plus"></i> New</button>
+            <button class="btn btn-secondary" disabled><i class="fas fa-save"></i> Save</button>
+            <button class="btn btn-danger" disabled><i class="fas fa-trash"></i> Delete</button>
+            <button class="btn btn-secondary" disabled><i class="fas fa-ban"></i> Set Inactive</button>
+        </div>
+
+        <div class="welcome-panel">
+            <p>Select a vehicle from the list, or click <strong>New</strong> to add one.</p>
+        </div>
     </div>
 </div>
 
-<div class="content">
-    <div class="content-header">
-        <h2>Welcome to Vehicle Manager</h2>
-    </div>
-    <p>Select a vehicle from the sidebar to view details, or click "New Vehicle" to add one.</p>
-</div>
-
-<div id="addVehicleModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:100;">
-    <div style="background:white; margin:5% auto; width:80%; padding:2rem; border-radius:8px;">
+<div id="addVehicleModal" class="modal" style="display:none;">
+    <div class="modal-content">
         <h2>Add New Vehicle</h2>
         <form action="/vehicles/new" method="post">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Vehicle #</label>
-                    <input type="text" name="vehicle_number" required>
-                </div>
-                <div class="form-group">
-                    <label>Vehicle Name (Description)</label>
-                    <input type="text" name="name" required>
-                </div>
-            </div>
+            <h3 class="section-title">Vehicle Information</h3>
             <div class="form-grid">
                 <div class="form-group">
                     <label>Model Year</label>
                     <input type="number" name="model_year">
                 </div>
                 <div class="form-group">
+                    <label>Odometer</label>
+                    <div class="input-group">
+                        <input type="number" name="odometer" value="0">
+                        <select name="odometer_unit">
+                            <option value="Kilometres">Kilometres</option>
+                            <option value="Miles">Miles</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
                     <label>Make</label>
                     <input type="text" name="make">
+                </div>
+                <div class="form-group">
+                    <label>VIN #</label>
+                    <input type="text" name="vin">
                 </div>
             </div>
             <div class="form-grid">
@@ -53,8 +76,8 @@
                     <input type="text" name="model">
                 </div>
                 <div class="form-group">
-                    <label>VIN #</label>
-                    <input type="text" name="vin">
+                    <label>Vehicle #</label>
+                    <input type="text" name="vehicle_number" required>
                 </div>
             </div>
             <div class="form-grid">
@@ -74,6 +97,7 @@
                         <option value="Car">Car</option>
                         <option value="Truck">Truck</option>
                         <option value="Van">Van</option>
+                        <option value="SUV">SUV</option>
                         <option value="Motorcycle">Motorcycle</option>
                     </select>
                 </div>
@@ -82,15 +106,88 @@
                     <input type="text" name="department">
                 </div>
             </div>
-            <div class="form-group">
-                <label>Odometer</label>
-                <input type="number" name="odometer" value="0">
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Vehicle Name (Description)</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Plate/Tag #</label>
+                    <input type="text" name="plate_tag">
+                </div>
             </div>
-            <div style="text-align: right; margin-top: 1rem;">
+
+            <div class="form-section-row">
+                <div class="form-section-half">
+                    <h3 class="section-title">License/Registration</h3>
+                    <div class="form-group">
+                        <label>Renewal</label>
+                        <input type="date" name="renewal_date">
+                    </div>
+                </div>
+                <div class="form-section-half">
+                    <h3 class="section-title">Mechanical</h3>
+                    <div class="form-group">
+                        <label>Engine</label>
+                        <input type="text" name="engine">
+                    </div>
+                    <div class="form-group">
+                        <label>Transmission</label>
+                        <select name="transmission">
+                            <option value="Automatic">Automatic</option>
+                            <option value="Manual">Manual</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tire Size</label>
+                        <input type="text" name="tire_size">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section-row">
+                <div class="form-section-half">
+                    <h3 class="section-title">Insurance</h3>
+                    <div class="form-group">
+                        <label>Company</label>
+                        <input type="text" name="insurance_company">
+                    </div>
+                    <div class="form-group">
+                        <label>Account #</label>
+                        <input type="text" name="insurance_account">
+                    </div>
+                    <div class="form-group">
+                        <label>Premium</label>
+                        <input type="number" name="insurance_premium" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Due</label>
+                        <input type="date" name="insurance_due">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea name="notes" rows="3"></textarea>
+            </div>
+
+            <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="document.getElementById('addVehicleModal').style.display='none'">Cancel</button>
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+document.getElementById('searchBox').addEventListener('input', function() {
+    const term = this.value.toLowerCase();
+    document.querySelectorAll('.vehicle-item').forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(term) ? 'flex' : 'none';
+    });
+});
+</script>
 {% endblock %}

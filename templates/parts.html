@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-title">
+    <h2>Parts / Materials</h2>
+    <p class="subtitle">Manage parts inventory</p>
+</div>
+
+<div class="main-container">
+    <div class="sidebar">
+        <div class="sidebar-controls">
+            <input type="text" placeholder="Search..." id="searchBox">
+        </div>
+        <div class="vehicle-list">
+            {% for p in parts %}
+            <div class="vehicle-item">
+                <span class="vehicle-num"><i class="fas fa-cog"></i></span>
+                <span class="vehicle-name">{{ p.name }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="document.getElementById('addModal').style.display='block'"><i class="fas fa-plus"></i> New</button>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Part Number</th>
+                    <th>Quantity</th>
+                    <th>Unit Cost</th>
+                    <th>Total Value</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in parts %}
+                <tr>
+                    <td>{{ p.name }}</td>
+                    <td>{{ p.part_number or '' }}</td>
+                    <td>{{ p.quantity }}</td>
+                    <td>{{ p.unit_cost }}</td>
+                    <td>{{ (p.quantity * p.unit_cost)|round(2) }}</td>
+                    <td>{{ p.notes or '' }}</td>
+                </tr>
+                {% endfor %}
+                {% if not parts %}
+                <tr><td colspan="6" style="text-align:center; color:#999;">No parts yet</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="addModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Add Part</h3>
+        <form action="/parts/new" method="post">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>Part Number</label>
+                <input type="text" name="part_number">
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" name="quantity" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Unit Cost</label>
+                    <input type="number" name="unit_cost" step="0.01" value="0">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea name="notes" rows="2"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('addModal').style.display='none'">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('searchBox').addEventListener('input', function() {
+    const term = this.value.toLowerCase();
+    document.querySelectorAll('.vehicle-item').forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(term) ? 'flex' : 'none';
+    });
+});
+</script>
+{% endblock %}

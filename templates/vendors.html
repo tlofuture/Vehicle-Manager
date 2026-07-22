@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-title">
+    <h2>Vendors</h2>
+    <p class="subtitle">Manage service providers and suppliers</p>
+</div>
+
+<div class="main-container">
+    <div class="sidebar">
+        <div class="sidebar-controls">
+            <input type="text" placeholder="Search..." id="searchBox">
+        </div>
+        <div class="vehicle-list">
+            {% for v in vendors %}
+            <div class="vehicle-item">
+                <span class="vehicle-num"><i class="fas fa-store"></i></span>
+                <span class="vehicle-name">{{ v.name }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="document.getElementById('addModal').style.display='block'"><i class="fas fa-plus"></i> New</button>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Contact Person</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for v in vendors %}
+                <tr>
+                    <td>{{ v.name }}</td>
+                    <td>{{ v.contact_person or '' }}</td>
+                    <td>{{ v.phone or '' }}</td>
+                    <td>{{ v.email or '' }}</td>
+                    <td>{{ v.address or '' }}</td>
+                </tr>
+                {% endfor %}
+                {% if not vendors %}
+                <tr><td colspan="5" style="text-align:center; color:#999;">No vendors yet</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="addModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Add Vendor</h3>
+        <form action="/vendors/new" method="post">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>Contact Person</label>
+                <input type="text" name="contact_person">
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" name="phone">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email">
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <textarea name="address" rows="2"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('addModal').style.display='none'">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('searchBox').addEventListener('input', function() {
+    const term = this.value.toLowerCase();
+    document.querySelectorAll('.vehicle-item').forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(term) ? 'flex' : 'none';
+    });
+});
+</script>
+{% endblock %}

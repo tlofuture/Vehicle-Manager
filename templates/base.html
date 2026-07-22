@@ -9,17 +9,11 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="nav-item active"><i class="fas fa-car"></i>Vehicles</div>
-        <div class="nav-item"><i class="fas fa-wrench"></i>Service</div>
-        <div class="nav-item"><i class="fas fa-cogs"></i>Parts</div>
-        <div class="nav-item"><i class="fas fa-users"></i>Personnel</div>
-        <div class="nav-item"><i class="fas fa-store"></i>Vendors</div>
-        <div class="nav-item"><i class="fas fa-cog"></i>Options</div>
-        <div class="nav-item"><i class="fas fa-chart-bar"></i>Reports</div>
-        <div class="nav-item"><i class="fas fa-question-circle"></i>Help</div>
+        <a href="/" class="nav-item active"><i class="fas fa-car"></i><span>Vehicles</span></a>
+        <a href="/personnel" class="nav-item"><i class="fas fa-users"></i><span>Personnel</span></a>
+        <a href="/parts" class="nav-item"><i class="fas fa-cogs"></i><span>Parts</span></a>
+        <a href="/vendors" class="nav-item"><i class="fas fa-store"></i><span>Vendors</span></a>
     </nav>
-    <div class="main-container">
-        {% block content %}{% endblock %}
-    </div>
+    {% block content %}{% endblock %}
 </body>
 </html>
