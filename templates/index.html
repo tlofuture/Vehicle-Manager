@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="sidebar">
+    <div class="sidebar-header">
+        <h2>Vehicles</h2>
+        <p>Manage your vehicles, fuel log, service, and parts</p>
+        <button class="btn btn-primary" onclick="document.getElementById('addVehicleModal').style.display='block'">New Vehicle</button>
+    </div>
+    <div class="vehicle-list">
+        {% for v in vehicles %}
+        <a href="/vehicles/{{ v.id }}" class="vehicle-item">
+            <span>{{ v.vehicle_number }}</span>
+            <span>{{ v.name }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="content">
+    <div class="content-header">
+        <h2>Welcome to Vehicle Manager</h2>
+    </div>
+    <p>Select a vehicle from the sidebar to view details, or click "New Vehicle" to add one.</p>
+</div>
+
+<div id="addVehicleModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:100;">
+    <div style="background:white; margin:5% auto; width:80%; padding:2rem; border-radius:8px;">
+        <h2>Add New Vehicle</h2>
+        <form action="/vehicles/new" method="post">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Vehicle #</label>
+                    <input type="text" name="vehicle_number" required>
+                </div>
+                <div class="form-group">
+                    <label>Vehicle Name (Description)</label>
+                    <input type="text" name="name" required>
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Model Year</label>
+                    <input type="number" name="model_year">
+                </div>
+                <div class="form-group">
+                    <label>Make</label>
+                    <input type="text" name="make">
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Model</label>
+                    <input type="text" name="model">
+                </div>
+                <div class="form-group">
+                    <label>VIN #</label>
+                    <input type="text" name="vin">
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Color</label>
+                    <input type="text" name="color">
+                </div>
+                <div class="form-group">
+                    <label>Driver/Operator</label>
+                    <input type="text" name="driver">
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Type</label>
+                    <select name="vehicle_type">
+                        <option value="Car">Car</option>
+                        <option value="Truck">Truck</option>
+                        <option value="Van">Van</option>
+                        <option value="Motorcycle">Motorcycle</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    <input type="text" name="department">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Odometer</label>
+                <input type="number" name="odometer" value="0">
+            </div>
+            <div style="text-align: right; margin-top: 1rem;">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('addVehicleModal').style.display='none'">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
